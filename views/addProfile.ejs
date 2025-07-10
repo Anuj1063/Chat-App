@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile Setup</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      .profile-pic-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .back-button {
+         position: fixed;
+         left: 20px;
+         top: 20px;
+         background: rgba(255, 255, 255, 0.1);
+         color: #fff;
+         padding: 10px 15px;
+         border-radius: 10px;
+         text-decoration: none;
+         font-size: 18px;
+         backdrop-filter: blur(10px);
+         border: 1px solid rgba(255, 255, 255, 0.2);
+         transition: background 0.3s ease;
+      }
+
+      .back-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        box-shadow: 0 6px 24px rgba(255, 255, 255, 0.15);
+      }
+
+      .profile-pic-wrapper label {
+        display: block;
+        position: relative;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        overflow: hidden;
+        cursor: pointer;
+        border: 3px solid rgba(255, 255, 255, 0.6);
+        transition: border 0.3s;
+      }
+
+      .profile-pic-wrapper label:hover {
+        border: 3px solid white;
+      }
+
+      .profile-pic-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .profile-pic-wrapper input[type="file"] {
+        display: none;
+      }
+
+      .profile-pic-wrapper span {
+        margin-top: 10px;
+        color: #eee;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body >
+     
+    <% if (success.length > 0) { %>
+    <div class="flash-message success" id="flashMessage">
+      <span><%= success[0] %></span>
+      <i class="fa fa-times close-btn" onclick="closeFlash()"></i>
+    </div>
+    <% } %> <% if (error.length > 0) { %>
+    <div class="flash-message error" id="flashMessage">
+      <span><%= error[0] %></span>
+      <i class="fa fa-times close-btn" onclick="closeFlash()"></i>
+    </div>
+    <% } %>
+
+    <a href="/chat-dashboard" class="back-button">
+      <i class="fa fa-arrow-left" style="padding-left: 8px ;"></i>
+    </a>
+    
+    <div class="container">
+     
+      <h2>Set Up Profile</h2>
+
+      <form action="/add-profile" method="POST" enctype="multipart/form-data">
+        <div class="profile-pic-wrapper">
+          <label for="profile-pic">
+            <img
+              src="/uploads/<%= user.profilePic ? user.profilePic : 'avatar.png' %>"
+              alt="Profile Picture"
+              id="preview"
+            />
+          </label>
+          <input
+            type="file"
+            name="profilePic"
+            id="profile-pic"
+            accept="image/*"
+          />
+          <span>Tap to upload profile picture</span>
+        </div>
+
+        <div class="input-group">
+          <i class="fa fa-user"></i>
+          <input
+            type="text"
+            name="fullName"
+            placeholder="Full Name"
+            value="<%=user.fullName%>"
+            required
+          />
+        </div>
+
+        <button type="submit">update</button>
+      </form>
+      <script>
+        function closeFlash() {
+          const flash = document.getElementById("flashMessage");
+          if (flash) flash.style.display = "none";
+        }
+
+        // Auto-dismiss after 4 seconds
+        setTimeout(() => closeFlash(), 4000);
+      </script>
+    </div>
+
+    <script>
+      const input = document.getElementById("profile-pic");
+      const preview = document.getElementById("preview");
+
+      input.addEventListener("change", function () {
+        const file = this.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function () {
+            preview.src = reader.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    </script>
+  </body>
+</html>
