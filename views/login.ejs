@@ -3,12 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chat Login</title>
+  <title>Chatty</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
 
+  <!-- Flash Messages -->
   <% if (success.length > 0) { %>
     <div class="flash-message success" id="flashMessage">
       <span><%= success[0] %></span>
@@ -23,29 +25,41 @@
     </div>
   <% } %>
 
-  <div class="container">
-    <h2>Welcome Back</h2>
-    <form action="/login" method="post">
-      <div class="input-group">
-        <i class="fa fa-envelope"></i>
-        <input type="email" name="email" placeholder="Email" required />
+  <!-- Main Container -->
+  <div class="main-container">
+    
+    <!-- Form Section -->
+    <div class="form-container">
+      <div class="container">
+        <h2>Welcome Back</h2>
+        <form action="/login" method="post">
+          <div class="input-group">
+            <i class="fa fa-envelope"></i>
+            <input type="email" name="email" placeholder="Email" required />
+          </div>
+          <div class="input-group">
+            <i class="fa fa-lock"></i>
+            <input type="password" name="password" placeholder="Password" required />
+          </div>
+          <button type="submit">Login</button>
+          <p class="login-link">Don't have an account? <a href="/">Register</a></p>
+        </form>
       </div>
-      <div class="input-group">
-        <i class="fa fa-lock"></i>
-        <input type="password" name="password" placeholder="Password" required />
-      </div>
-      <button type="submit">Login</button>
-      <p class="login-link">Don't have an account? <a href="/register-form">Register</a></p>
-    </form>
+    </div>
+
+    <!-- Illustration Section -->
+    <div class="left-image">
+      <img src="/assets/Secure login-bro.png" alt="Chat Illustration" class="chat-image">
+    </div>
+
   </div>
 
+  <!-- Flash Script -->
   <script>
     function closeFlash() {
       const flash = document.getElementById('flashMessage');
       if (flash) flash.style.display = 'none';
     }
-
-    // Auto-dismiss after 4 seconds
     setTimeout(() => closeFlash(), 4000);
   </script>
 

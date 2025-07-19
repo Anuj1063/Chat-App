@@ -1,4 +1,5 @@
 const userModel = require("../models/user.model");
+const { userSocketMap } = require("../config/socket");
 const fs = require('fs');
 const path = require('path');
 
@@ -68,8 +69,8 @@ async addProfile(req, res) {
         .find({ _id: { $ne: loggedInUserId } })
         .select("-password");
 
-    
-        res.render("dashboard", { users,currentUser: req.user });
+    const onlineUserIds = Object.keys(userSocketMap);
+        res.render("dashboard", { users,currentUser: req.user,onlineUsers: onlineUserIds });
     
       
     } catch (error) {

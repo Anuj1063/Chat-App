@@ -46,4 +46,5 @@ module.exports = {
   setupSocket,
   getReceiverSocketId,
   getIO,
+  userSocketMap
 };

@@ -1,46 +1,57 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chat Registration</title>
+  <title>Chatty</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-  
-  <% if (typeof success !== 'undefined' && success.length > 0) { %>
+
+   <% if (success.length > 0) { %>
     <div class="flash-message success" id="flashMessage">
       <span><%= success[0] %></span>
       <i class="fa fa-times close-btn" onclick="closeFlash()"></i>
     </div>
   <% } %>
 
-  <% if (typeof error !== 'undefined' && error.length > 0) { %>
+  <% if (error.length > 0) { %>
     <div class="flash-message error" id="flashMessage">
       <span><%= error[0] %></span>
       <i class="fa fa-times close-btn" onclick="closeFlash()"></i>
     </div>
   <% } %>
 
-  <div class="container">
-    <h2>Join the Chat</h2>
-    <form action="/register" method="post">
-      <div class="input-group">
-        <i class="fa fa-user"></i>
-        <input type="text" name="fullName" placeholder="FullName" required />
+  <div class="main-container">
+    
+
+    <div class="form-container">
+      <div class="container">
+        <h2>Join the Chat</h2>
+        <form action="/register" method="POST" >
+          <div class="input-group">
+            <i class="fa fa-user"></i>
+            <input type="text" name="fullName" placeholder="Full Name" required />
+          </div>
+          <div class="input-group">
+            <i class="fa fa-envelope"></i>
+            <input type="email" name="email" placeholder="Email Address" required />
+          </div>
+          <div class="input-group">
+            <i class="fa fa-lock"></i>
+            <input type="password" name="password" placeholder="Password" required />
+          </div>
+          <button type="submit">Register</button>
+          <p class="login-link">Already have an account? <a href="/login-form">Login here</a></p>
+        </form>
       </div>
-      <div class="input-group">
-        <i class="fa fa-envelope"></i>
-        <input type="email" name="email" placeholder="Email" required />
-      </div>
-      <div class="input-group">
-        <i class="fa fa-lock"></i>
-        <input type="password" name="password" placeholder="Password" required />
-      </div>
-      <button type="submit">Register</button>
-      <p class="login-link">Already have an account? <a href="/login-form">Login</a></p>
-    </form>
+    </div>
+    <div class="left-image">
+      <img src="/assets/Group Chat-cuate.png" alt="Chat Illustration" class="chat-image" />
+    </div>
   </div>
 
   <script>
@@ -49,8 +60,15 @@
       if (flash) flash.style.display = 'none';
     }
 
-    // Auto-dismiss after 4 seconds
-    setTimeout(() => closeFlash(), 4000);
+    setTimeout(() => {
+      const flash = document.getElementById('flashMessage');
+      if (flash) {
+        flash.style.opacity = '0';
+        setTimeout(() => {
+          if (flash) flash.style.display = 'none';
+        }, 500);
+      }
+    }, 4000);
   </script>
 </body>
 </html>

@@ -1,403 +1,165 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chatty</title>
-  <link rel="stylesheet" href="/css/style.css" />
-  
-</head>
-<body>
-    <style>
-      /* Extend your theme here to style the chat layout */
-
-      body {
-        font-family: "Inter", sans-serif;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        height: 100vh;
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      .chat-window {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        color: white;
-      }
-
-      .chat-header {
-        padding: 10px 0;
-        font-weight: 600;
-        font-size: 18px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      .chat-body {
-        flex: 1;
-        overflow-y: auto;
-        padding: 20px 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        max-height: 461px;
-      }
-
-      .message {
-        max-width: 60%;
-        padding: 10px 15px;
-        border-radius: 15px;
-        font-size: 14px;
-      }
-
-      .received {
-        background: rgba(255, 255, 255, 0.1);
-        align-self: flex-start;
-      }
-
-      .sent {
-        background: rgba(255, 255, 255, 0.2);
-        align-self: flex-end;
-      }
-
-      .chat-input {
-        display: flex;
-        gap: 10px;
-        margin-top: auto;
-      }
-
-      .chat-input input {
-        flex: 1;
-        padding: 10px;
-        border: none;
-        border-radius: 10px;
-        outline: none;
-      }
-
-      .chat-input button {
-        padding: 10px 20px;
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        border-radius: 10px;
-        color: white;
-        cursor: pointer;
-      }
-
-      .chat-input button:hover {
-        background: rgba(255, 255, 255, 0.4);
-      }
-
-      .app {
-        display: flex;
-        width: 90%;
-        height: 90vh;
-        border-radius: 20px;
-        overflow: hidden;
-        backdrop-filter: blur(20px);
-        background: rgba(255, 255, 255, 0.05);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-      }
-
-      .sidebar {
-        width: 280px;
-        background: rgba(255, 255, 255, 0.07);
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      .logo {
-        display: flex;
-        align-items: center;
-        margin-bottom: 30px;
-      }
-
-      .logo .icon {
-        font-size: 24px;
-        margin-right: 10px;
-      }
-
-      .logo .title {
-        font-size: 20px;
-        font-weight: 600;
-        color: white;
-      }
-
-      .contacts h3 {
-        color: white;
-        margin-bottom: 10px;
-      }
-
-      .online-only {
-        color: #ccc;
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-      }
-
-      .online-only input {
-        margin-right: 8px;
-      }
-
-      .contact-list {
-        list-style: none;
-      }
-
-      .contact {
-        display: flex;
-        align-items: center;
-        margin-bottom: 15px;
-        cursor: pointer;
-        padding: 8px;
-        border-radius: 10px;
-        transition: background 0.2s;
-      }
-
-      .contact:hover {
-        background: rgba(255, 255, 255, 0.1);
-      }
-
-      .contact img {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        margin-right: 10px;
-      }
-
-      .name {
-        font-weight: 500;
-        color: white;
-      }
-
-      .status {
-        font-size: 12px;
-        color: #ccc;
-      }
-
-      .main {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        padding: 20px;
-        position: relative;
-        color: white;
-      }
-
-      .topbar {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-bottom: 20px;
-      }
-
-      .top-btn {
-        background: rgba(255, 255, 255, 0.1);
-        border: none;
-        padding: 8px 16px;
-        border-radius: 10px;
-        color: white;
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-
-      .top-btn:hover {
-        background: rgba(255, 255, 255, 0.2);
-      }
-
-      .logout {
-        background-color: rgba(220, 53, 69, 0.7);
-      }
-
-      .logout:hover {
-        background-color: rgba(220, 53, 69, 0.9);
-      }
-
-      .welcome {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 20px;
-      }
-
-      .chat-icon {
-        font-size: 48px;
-        margin-bottom: 20px;
-      }
-
-      .welcome h1 {
-        font-size: 28px;
-        margin-bottom: 10px;
-      }
-
-      .welcome p {
-        color: #ddd;
-        font-size: 16px;
-      }
-      .a-tag{
-        text-decoration: none;
-      }
-
-      @media (max-width: 768px) {
-        .app {
-          flex-direction: column;
-          height: auto;
-        }
-
-        .sidebar {
-          width: 100%;
-          border-right: none;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .main {
-          padding: 10px;
-        }
-
-        .topbar {
-          flex-direction: column;
-          align-items: flex-end;
-        }
-      }
-    </style>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="logo">
-        <span class="icon">💬</span>
-        <span class="title">Chatty</span>
-      </div>
-      <div class="contacts">
-        <h3>Contacts</h3>
-      
-        <ul class="contact-list">
-          <% users.map((user) => { %>
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Chatty</title>
+      <link rel="stylesheet" href="/css/chat.css" />
+      <link rel="icon" href="/assets/logo.png" type="image/png" />
+    </head>
+    <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="logo">
+          <img src="/assets/logo.png" style="width: 60px;" alt="">
+          <span class="title">Chatty</span>
+        </div>
+        <div class="contacts">
+          <h3>Contacts</h3>
+          <ul class="contact-list">
+            <% users.map((user) => { %>
             <li class="contact" data-user-id="<%= user._id %>">
-              <img src="/uploads<%=user.profilePic%>" />
+              <img
+                src="<%= user.profilePic ? `/uploads/${user.profilePic}` : '/uploads/avatar.png' %>"
+              />
               <div>
                 <p class="name"><%= user.fullName %></p>
-                <p class="status">Offline</p>
+                <p class="status">
+                  <span
+                    class="status-dot <%= onlineUsers.includes(user._id.toString()) ? 'online' : 'offline' %>"
+                  ></span>
+                  <%= onlineUsers.includes(user._id.toString()) ? 'Online' :
+                  'Offline' %>
+                </p>
               </div>
             </li>
-          <% }) %>
-        </ul>
-      </div>
-    </aside>
 
-    <main class="main">
-      <header class="topbar">
-        <button class="top-btn profile">Profile</button>
-        <button class="top-btn logout">Logout</button>
-      </header>
-      <div class="welcome">
-        <div class="chat-icon">💬</div>
-        <h1>Welcome to Chatty!</h1>
-        <p>Select a conversation from the sidebar to start chatting</p>
-      </div>
-    </main>
-  </div>
-<script src="/socket.io/socket.io.js"></script>
-<script>
-  const socket = io({
-    query: {
-      userId: "<%= currentUser._id %>",
-    },
-  });
+            <% }) %>
+          </ul>
+        </div>
+      </aside>
 
-  socket.on("connect", () => {
-    console.log("✅ Socket connected:", socket.id);
-  });
+      <main class="main">
+        <header class="topbar">
+          <div class="settings-dropdown">
+            <button
+              class="top-btn settings-btn"
+              id="settings-btn"
+              aria-label="Settings ⚙️"
+            >
+              ⚙️
+            </button>
+            <div class="dropdown-menu" id="dropdown-menu" style="display: none">
+              <button class="dropdown-item profile">Profile</button>
+              <button class="dropdown-item logout">Logout</button>
+            </div>
+          </div>
+        </header>
 
-  // 🟢 ONLINE USERS HANDLING
-  socket.on("getOnlineUsers", (users) => {
-    console.log("👥 Online users:", users);
+        <div class="welcome">
+          <div class="chat-icon"><img src="/assets/logo.png" alt=""></div>
+          <h1>Welcome to Chatty!</h1>
+          <p>Select a conversation from the sidebar to start chatting</p>
+        </div>
+      </main>
+    </div>
 
-    // Update count
-    const countSpan = document.querySelector(".count");
-    if (countSpan) countSpan.textContent = `(${users.length} online)`;
+    <script src="/socket.io/socket.io.js"></script>
 
-    // Update each contact's online/offline status
-    document.querySelectorAll(".contact").forEach((contact) => {
-      const userId = contact.getAttribute("data-user-id");
-      const statusEl = contact.querySelector(".status");
+    <script>
+      const socket = io({
+        query: { userId: "<%= currentUser._id %>" },
+      });
 
-      if (users.includes(userId)) {
-        statusEl.textContent = "Online";
-        statusEl.style.color = "lightgreen";
-      } else {
-        statusEl.textContent = "Offline";
-        statusEl.style.color = "#ccc";
-      }
-    });
+      socket.on("connect", () => {
+        console.log("✅ Socket connected:", socket.id);
+      });
 
-    // Handle filter toggle
-    const checkbox = document.querySelector(".online-only input");
-    const showOnlineOnly = checkbox.checked;
+      socket.on("getOnlineUsers", (users) => {
+        const countSpan = document.querySelector(".count");
+        if (countSpan) countSpan.textContent = `(${users.length} online)`;
 
-    document.querySelectorAll(".contact").forEach((contact) => {
-      const userId = contact.getAttribute("data-user-id");
-      const isOnline = users.includes(userId);
-      contact.style.display = showOnlineOnly && !isOnline ? "none" : "flex";
-    });
-  });
+        document.querySelectorAll(".contact").forEach((contact) => {
+          const userId = contact.getAttribute("data-user-id");
+          const statusEl = contact.querySelector(".status");
 
-  // 🎯 Filter contacts when checkbox changes
-  document.querySelector(".online-only input").addEventListener("change", () => {
-    socket.emit("requestOnlineUsers"); // ask for fresh list
-  });
+          if (users.includes(userId)) {
+            statusEl.textContent = "Online";
+            statusEl.style.color = "lightgreen";
+          } else {
+            statusEl.textContent = "Offline";
+            statusEl.style.color = "#ccc";
+          }
+        });
 
-  // 📩 New message received
-  socket.on("receiveMessage", (message) => {
-    console.log("📩 New message received:", message);
+        const checkbox = document.querySelector(".online-only input");
+        if (!checkbox) return;
+        const showOnlineOnly = checkbox.checked;
 
-    const chatBody = document.querySelector(".chat-body");
-    if (chatBody) {
-      const cls = message.senderId === "<%= currentUser._id %>" ? "sent" : "received";
-      const msgEl = document.createElement("div");
-      msgEl.className = `message ${cls}`;
-      msgEl.textContent = message.text;
-      chatBody.appendChild(msgEl);
-    }
-  });
-</script>
+        document.querySelectorAll(".contact").forEach((contact) => {
+          const userId = contact.getAttribute("data-user-id");
+          const isOnline = users.includes(userId);
+          contact.style.display = showOnlineOnly && !isOnline ? "none" : "flex";
+        });
+      });
 
+      document
+        .querySelector(".online-only input")
+        ?.addEventListener("change", () => {
+          socket.emit("requestOnlineUsers");
+        });
 
-<script>
-  const contacts = document.querySelectorAll(".contact");
-  const main = document.querySelector(".main");
-  const currentUserId = "<%= currentUser._id %>";
+      socket.on("receiveMessage", (message) => {
+        const chatBody = document.querySelector(".chat-body");
+        if (chatBody) {
+          const cls =
+            message.senderId === "<%= currentUser._id %>" ? "sent" : "received";
+          const msgEl = document.createElement("div");
+          msgEl.className = `message ${cls}`;
+          msgEl.textContent = message.text;
+          chatBody.appendChild(msgEl);
+        }
+      });
+    </script>
 
-  contacts.forEach((contact) => {
-    contact.addEventListener("click", async () => {
-      const name = contact.querySelector(".name").innerText;
-      const userId = contact.getAttribute("data-user-id");
+    <script>
+      const contacts = document.querySelectorAll(".contact");
+      const main = document.querySelector(".main");
+      const currentUserId = "<%= currentUser._id %>";
 
-      try {
-        const res = await fetch(`/api/messages/${userId}`);
-        const messages = await res.json();
+      contacts.forEach((contact) => {
+        contact.addEventListener("click", async () => {
+          const name = contact.querySelector(".name").innerText;
+          const userId = contact.getAttribute("data-user-id");
 
-        const messageHTML = messages.map((msg) => {
-          const cls = msg.senderId === currentUserId ? "sent" : "received";
-          const text = msg.text || "";
-          const image = msg.image ? `<img src="${msg.image}" style="max-width:100%" />` : "";
-          return `<div class="message ${cls}">${text}${image}</div>`;
-        }).join("");
+          try {
+            const res = await fetch(`/api/messages/${userId}`);
+            const messages = await res.json();
 
-        main.innerHTML = `
+            const messageHTML = messages
+              .map((msg) => {
+                const cls =
+                  msg.senderId === currentUserId ? "sent" : "received";
+                const text = msg.text || "";
+                const image = msg.image
+                  ? `<img src="${msg.image}" style="max-width:100%" />`
+                  : "";
+                return `<div class="message ${cls}">${text}${image}</div>`;
+              })
+              .join("");
+
+            main.innerHTML = `
           <header class="topbar">
-           
-
-            <button class="top-btn profile">Profile</button>
-            <button class="top-btn logout">Logout</button>
+            <div class="settings-dropdown">
+              <button class="top-btn settings-btn" id="settings-btn" aria-label="Settings ⚙️">⚙️</button>
+              <div class="dropdown-menu" id="dropdown-menu" style="display:none;">
+                <button class="dropdown-item profile">Profile</button>
+                <button class="dropdown-item logout">Logout</button>
+              </div>
+            </div>
           </header>
           <div class="chat-window">
-            <div class="chat-header">
-              <span class="chat-user">${name}</span>
-            </div>
+            <div class="chat-header"><span class="chat-user">${name}</span></div>
             <div class="chat-body">${messageHTML}</div>
             <div class="chat-input">
               <input type="text" name="text" placeholder="Type a message..." />
@@ -406,55 +168,89 @@
           </div>
         `;
 
-        // 🧠 After re-render, re-bind input & button
-        const input = document.querySelector(".chat-input input");
-        const sendButton = document.querySelector(".chat-input button");
-        const chatBody = document.querySelector(".chat-body");
+            // Re-bind UI actions
+            initSettingsDropdown();
+            bindProfileLogout();
 
-        sendButton.addEventListener("click", async () => {
-          const message = input.value.trim();
-          if (!message) return;
+            const input = document.querySelector(".chat-input input");
+            const sendButton = document.querySelector(".chat-input button");
+            const chatBody = document.querySelector(".chat-body");
 
-          // Send message to backend
-          const res = await fetch(`/api/messages/send/${userId}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ text: message })
-          });
+            sendButton.addEventListener("click", async () => {
+              const message = input.value.trim();
+              if (!message) return;
 
-          const newMessage = await res.json();
+              const res = await fetch(`/api/messages/send/${userId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text: message }),
+              });
 
-          // Append to chat window
-          const div = document.createElement("div");
-          div.className = "message sent";
-          div.textContent = newMessage.text;
-          chatBody.appendChild(div);
+              const newMessage = await res.json();
 
-          input.value = "";
-          chatBody.scrollTop = chatBody.scrollHeight; // auto-scroll
+              const div = document.createElement("div");
+              div.className = "message sent";
+              div.textContent = newMessage.text;
+              chatBody.appendChild(div);
+
+              input.value = "";
+              chatBody.scrollTop = chatBody.scrollHeight;
+            });
+          } catch (err) {
+            console.error("Error fetching messages", err);
+          }
+        });
+      });
+
+      // 🔧 Dropdown toggle logic
+      function initSettingsDropdown() {
+        const settingsBtn = document.querySelector("#settings-btn");
+        const dropdownMenu = document.querySelector("#dropdown-menu");
+
+        if (!settingsBtn || !dropdownMenu) return;
+
+        settingsBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          dropdownMenu.style.display =
+            dropdownMenu.style.display === "flex" ? "none" : "flex";
         });
 
-      } catch (err) {
-        console.error("Error fetching messages", err);
+        document.addEventListener("click", (e) => {
+          if (
+            !settingsBtn.contains(e.target) &&
+            !dropdownMenu.contains(e.target)
+          ) {
+            dropdownMenu.style.display = "none";
+          }
+        });
       }
-    });
-  });
 
-    document.body.addEventListener("click", function (e) {
-    if (e.target.classList.contains("logout")) {
-      // Redirect to server logout route
-      window.location.href = "/logout";
-    }
-  });
-    document.body.addEventListener("click", function (e) {
-    if (e.target.classList.contains("profile")) {
-      // Redirect to server logout route
-      window.location.href = "/add-profile-form";
-    }
-  });
-</script>
+      // 🔁 Reusable button action binder
+      function bindProfileLogout() {
+        const profileBtn = document.querySelector(".dropdown-item.profile");
+        const logoutBtn = document.querySelector(".dropdown-item.logout");
 
-</body>
+        if (profileBtn) {
+          profileBtn.addEventListener("click", () => {
+            window.location.href = "/add-profile-form";
+          });
+        }
+
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", async () => {
+            try {
+              await fetch("/logout", { method: "POST" });
+              window.location.href = "/login-form";
+            } catch (err) {
+              console.error("Logout failed", err);
+            }
+          });
+        }
+      }
+
+      // 👇 Call both once on page load
+      initSettingsDropdown();
+      bindProfileLogout();
+    </script>
+  </body>
 </html>
